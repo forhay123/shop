@@ -9,3 +9,4 @@ pydantic
 alembic
 python-multipart
 email-validator
+fastapi-mail
