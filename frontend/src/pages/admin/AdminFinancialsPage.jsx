@@ -119,7 +119,7 @@ export default function AdminFinancialsPage() {
   ) || 0;
 
   const totalRevenue = orders?.reduce((acc, order) => {
-    if (order.status === "paid" || order.status === "shipped") {
+    if (order.status === "paid" || order.status === "shipped" || order.status === "delivered") {
       return acc + (order.total_amount || 0);
     }
     return acc;
