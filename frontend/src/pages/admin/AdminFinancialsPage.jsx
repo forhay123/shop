@@ -118,6 +118,7 @@ export default function AdminFinancialsPage() {
     0
   ) || 0;
 
+  // This part is already correct, as you've already fixed it.
   const totalRevenue = orders?.reduce((acc, order) => {
     if (order.status === "paid" || order.status === "shipped" || order.status === "delivered") {
       return acc + (order.total_amount || 0);
@@ -125,8 +126,9 @@ export default function AdminFinancialsPage() {
     return acc;
   }, 0) || 0;
 
+  // FIX: Add 'delivered' to the COGS calculation
   const totalCOGS = orders?.reduce((acc, order) => {
-    if (order.status === "paid" || order.status === "shipped") {
+    if (order.status === "paid" || order.status === "shipped" || order.status === "delivered") {
       const orderCost = order.items?.reduce((itemAcc, item) => {
         if (item.product) { 
           const product = products?.find((p) => p.id === item.product.id);
@@ -145,8 +147,9 @@ export default function AdminFinancialsPage() {
   const profitMargin = totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100) : 0;
 
   const totalOrders = orders?.length || 0;
+  // FIX: Add 'delivered' to the paidOrders filter
   const paidOrders = orders?.filter(
-    (order) => order.status === "paid" || order.status === "shipped"
+    (order) => order.status === "paid" || order.status === "shipped" || order.status === "delivered"
   ).length || 0;
   const pendingOrders = orders?.filter(
     (order) => order.status === "pending"
@@ -154,8 +157,9 @@ export default function AdminFinancialsPage() {
 
   // Product Sales Analytics
   const productSalesMap = new Map();
+  // FIX: Add 'delivered' to the order status check
   orders?.forEach((order) => {
-    if (order.status === "paid" || order.status === "shipped") {
+    if (order.status === "paid" || order.status === "shipped" || order.status === "delivered") {
       order.items?.forEach((item) => {
         if (item.product) {
           const productId = item.product.id;
