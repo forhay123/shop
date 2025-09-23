@@ -11,7 +11,7 @@ export const PortfolioSection = () => {
       image: "/img/port4.jpeg",
       technologies: ["React", "Node.js", "MongoDB", "Redis", "AWS", "Stripe"],
       githubLink: "https://github.com/johndoe/enterprise-ecommerce",
-      liveLink: "https://obligingly-overvehement-paulette.ngrok-free.app/dashboard",
+      liveLink: "https://shop-frontend-o6yu.onrender.com/dashboard",
       loginDetails: {
         Admin: { username: "awtsmith8@gmail.com", password: "myshop000" },
         Customer: { username: "andiawt14@gmail.com", password: "cabtech00000" }
@@ -30,7 +30,7 @@ export const PortfolioSection = () => {
       image: "/img/port2.jpeg",
       technologies: ["React", "Strapi", "PostgreSQL", "Next.js", "AWS"],
       githubLink: "https://github.com/johndoe/church-academy",
-      liveLink: "https://obligingly-overvehement-paulette.ngrok-free.app/academy/",
+      liveLink: "https://subconnectedly-preservable-maxie.ngrok-free.dev/academy/",
       loginDetails: {
         Teacher: { username: "teacher", password: "haybee" },
         Member: { username: "seun", password: "haybee" }
@@ -48,7 +48,7 @@ export const PortfolioSection = () => {
       image: "/img/port3.jpeg",
       technologies: ["Next.js", "Socket.IO", "WebRTC", "MongoDB", "Redis", "Kubernetes"],
       githubLink: "https://github.com/johndoe/church-workforce",
-      liveLink: "https://obligingly-overvehement-paulette.ngrok-free.app/workforce/",
+      liveLink: "https://subconnectedly-preservable-maxie.ngrok-free.dev/workforce/",
       loginDetails: {
         admin: { username: "james.okoro@hqchurch.com", password: "haybee" },
         staff: { username: "staff", password: "password" }
@@ -82,7 +82,7 @@ export const PortfolioSection = () => {
       image: "/img/port1.jpeg",
       technologies: ["React Native", "Node.js", "MongoDB", "AWS Lambda"],
       githubLink: "https://github.com/johndoe/educational-platform",
-      liveLink: "https://educational-platform.demo.com",
+      liveLink: "https://subconnectedly-preservable-maxie.ngrok-free.dev/school/",
       loginDetails: {
         admin: { username: "admin", password: "password" },
         student: { username: "student", password: "password" }
