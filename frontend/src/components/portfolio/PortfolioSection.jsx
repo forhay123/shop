@@ -84,8 +84,8 @@ export const PortfolioSection = () => {
       githubLink: "https://github.com/johndoe/educational-platform",
       liveLink: "https://subconnectedly-preservable-maxie.ngrok-free.dev/school/",
       loginDetails: {
-        admin: { username: "admin", password: "password" },
-        student: { username: "student", password: "password" }
+        teacher: { username: "georgeteach", password: "haybee" },
+        student: { username: "vincentstd", password: "haybee" }
       },
       functionalities: [
         "Adaptive Learning Paths",
