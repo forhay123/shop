@@ -51,7 +51,7 @@ export const PortfolioSection = () => {
       liveLink: "https://subconnectedly-preservable-maxie.ngrok-free.dev/workforce/",
       loginDetails: {
         admin: { username: "james.okoro@hqchurch.com", password: "haybee" },
-        staff: { username: "staff", password: "password" }
+        staff: { username: "brian.okon@hqchurch.com", password: "haybee" }
       },
       functionalities: [
         "Real-time Communication & Messaging",
