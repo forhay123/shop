@@ -24,11 +24,12 @@ const ProductCard = ({ product, handleCardClick }) => {
 
   return (
     <Card 
-      // *** CORRECTION 1: Reduced card width from w-56 to w-44 ***
-      className="group flex-none w-44 bg-gradient-to-br from-card to-card/50 border-border/50 shadow-elegant hover:shadow-glow transition-all duration-500 transform hover:-translate-y-2 cursor-pointer overflow-hidden"
+      // *** MODIFICATION: Reduced card width from w-44 to w-40 for better mobile scrolling ***
+      // flex-none is essential to prevent flex-items from shrinking
+      className="group flex-none w-40 bg-gradient-to-br from-card to-card/50 border-border/50 shadow-elegant hover:shadow-glow transition-all duration-500 transform hover:-translate-y-2 cursor-pointer overflow-hidden"
       onClick={() => handleCardClick(product)}
     >
-      {/* *** CORRECTION 2: Reduced image height from h-48 to h-36 *** */}
+      {/* Reduced image height from h-48 to h-36 */}
       <div className="relative h-36 w-full overflow-hidden">
         <img
           src={`${UPLOADS_BASE_URL}/${product.image_url}`}
@@ -47,15 +48,15 @@ const ProductCard = ({ product, handleCardClick }) => {
           </div>
         </div>
       </div>
-      {/* *** CORRECTION 3: Reduced padding in CardHeader from p-6 to p-4 *** */}
+      {/* Reduced padding in CardHeader from p-6 to p-4 */}
       <CardHeader className="p-4 space-y-2"> {/* Reduced vertical space */}
         <div className="space-y-1"> {/* Reduced vertical space */}
-          {/* *** CORRECTION 4: Reduced title font size from text-lg to text-base *** */}
+          {/* Reduced title font size from text-lg to text-base */}
           <CardTitle className="text-base font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
             {product.name}
           </CardTitle>
           <div className="flex items-center justify-between">
-            {/* *** CORRECTION 5: Reduced price font size from text-2xl to text-xl *** */}
+            {/* Reduced price font size from text-2xl to text-xl */}
             <div className="text-xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
               ${product.selling_price.toFixed(2)}
             </div>
@@ -67,9 +68,8 @@ const ProductCard = ({ product, handleCardClick }) => {
         </div>
         <div className="pt-1">{getStockBadge(product.stock)}</div> {/* Added a div for better stock badge placement */}
       </CardHeader>
-      {/* *** CORRECTION 6: Reduced padding in CardContent from px-6 pb-6 pt-0 to px-4 pb-4 pt-0 *** */}
+      {/* CardContent is hidden to maintain a compact vertical size */}
       <CardContent className="px-4 pb-4 pt-0 hidden"> 
-        {/* Hidden to further reduce height, as the Jumia example doesn't show descriptions */}
         <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
           {product.description}
         </p>
@@ -263,8 +263,9 @@ export default function DashboardPage() {
                   </Button>
                 </div>
                 
-                {/* Corrected: Added flex-wrap and adjusted gap for better layout */}
-                <div className="flex flex-wrap gap-6"> 
+                {/* *** THE KEY CORRECTION FOR MOBILE HORIZONTAL SCROLLING *** */}
+                {/* Changed flex-wrap to overflow-x-auto and ensured default is a single line (no flex-wrap) */}
+                <div className="flex overflow-x-auto gap-4 pb-4 md:flex-wrap md:gap-6"> 
                   {categorizedProducts[category].map(product => (
                     <ProductCard
                       key={product.id}
