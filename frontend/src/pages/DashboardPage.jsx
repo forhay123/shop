@@ -120,13 +120,14 @@ export default function DashboardPage() {
     });
 
     const sortedCategories = categories.sort((a, b) => {
-      const latestProductA = categoryMap[a].reduce((latest, current) => {
-        return (new Date(current.created_at) > new Date(latest.created_at)) ? current : latest;
-      }, categoryMap[a][0]);
+      // Safely check for products before accessing created_at
+      const latestProductA = categoryMap[a] && categoryMap[a].length > 0 
+        ? categoryMap[a].reduce((latest, current) => (new Date(current.created_at) > new Date(latest.created_at) ? current : latest), categoryMap[a][0])
+        : { created_at: new Date(0) }; // Fallback for empty category
 
-      const latestProductB = categoryMap[b].reduce((latest, current) => {
-        return (new Date(current.created_at) > new Date(latest.created_at)) ? current : latest;
-      }, categoryMap[b][0]);
+      const latestProductB = categoryMap[b] && categoryMap[b].length > 0 
+        ? categoryMap[b].reduce((latest, current) => (new Date(current.created_at) > new Date(latest.created_at) ? current : latest), categoryMap[b][0])
+        : { created_at: new Date(0) }; // Fallback for empty category
 
       return new Date(latestProductB.created_at) - new Date(latestProductA.created_at);
     });
@@ -141,10 +142,15 @@ export default function DashboardPage() {
     return finalCategorizedProducts;
   }, [products, searchTerm]);
 
-  // FIX: This useMemo has been moved here, before the conditional return.
   const allCategories = useMemo(() => {
     return [...new Set(products.map(p => p.category).filter(Boolean))].sort();
   }, [products]);
+
+  // Handler for "View All" button - NEW LOGIC
+  const handleViewAllCategory = (categoryName) => {
+    // Navigate to the products page with the category query parameter
+    navigate(`/products?category=${encodeURIComponent(categoryName)}`);
+  };
 
   if (loading) {
     return (
@@ -170,15 +176,11 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      {/* *** MAJOR CORRECTION: Removed 'container mx-auto px-6' from the main content wrapper. ***
-        We now use 'px-6 md:px-0' to remove side padding on mobile (default) and re-introduce it 
-        on desktop/larger screens (md:px-0 is effectively removed when container is used).
-        The 'container mx-auto' logic is applied using responsive utility classes.
-      */}
+      {/* CORRECTION: Removed mobile padding/margin for edge-to-edge look */}
       <div className="px-0 md:container md:mx-auto md:px-6 py-8 space-y-10">
         
         {/* Hero and Search Section - Re-adding padding just for the content inside */}
-        <div className="px-4 md:px-0"> {/* Add horizontal padding back only for internal elements */}
+        <div className="px-4 md:px-0"> 
           <div className="flex flex-col md:flex-row items-center justify-between gap-8 py-8">
             {/* Hero Content - Adjusted */}
             <div className="text-center md:text-left space-y-4 max-w-2xl md:max-w-xl mx-auto md:mx-0">
@@ -259,9 +261,10 @@ export default function DashboardPage() {
                       {category}
                     </h2>
                   </div>
+                  {/* FIX: Updated onClick to navigate to the category-specific products page */}
                   <Button 
                     variant="outline" 
-                    onClick={() => navigate('/products')}
+                    onClick={() => handleViewAllCategory(category)}
                     className="group border-primary/20 hover:bg-primary hover:text-primary-foreground"
                   >
                     View All
@@ -269,11 +272,6 @@ export default function DashboardPage() {
                   </Button>
                 </div>
                 
-                {/* *** CORRECTION FOR ROW LIMIT: 
-                  For mobile: We use `overflow-x-auto` with `gap-4` and `pl-4` to create an edge-to-edge scroll.
-                  For desktop (`md`): We use `md:flex-nowrap md:overflow-hidden` to show exactly one row of items, 
-                  cutting off any items that exceed the screen width. We also add `md:px-0` to the item container itself.
-                */}
                 <div className="flex overflow-x-auto gap-4 pb-4 pl-4 md:pl-0 md:flex-nowrap md:overflow-hidden"> 
                   {categorizedProducts[category].map(product => (
                     <ProductCard
