@@ -24,7 +24,7 @@ const ProductCard = ({ product, handleCardClick }) => {
 
   return (
     <Card 
-      // *** MODIFICATION: Reduced card width from w-44 to w-40 for better mobile scrolling ***
+      // MODIFICATION: Card width remains w-40
       // flex-none is essential to prevent flex-items from shrinking
       className="group flex-none w-40 bg-gradient-to-br from-card to-card/50 border-border/50 shadow-elegant hover:shadow-glow transition-all duration-500 transform hover:-translate-y-2 cursor-pointer overflow-hidden"
       onClick={() => handleCardClick(product)}
@@ -169,9 +169,11 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <div className="container mx-auto px-6 py-16 space-y-12">
+      {/* CORRECTION 1: Reduced main vertical padding from py-16 to py-8 */}
+      <div className="container mx-auto px-6 py-8 space-y-10">
         {/* Hero and Search Section combined to save vertical space */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8 py-12">
+        {/* CORRECTION 2: Reduced vertical padding from py-12 to py-8 */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8 py-8">
           {/* Hero Content - Adjusted */}
           <div className="text-center md:text-left space-y-4 max-w-2xl md:max-w-xl mx-auto md:mx-0">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm">
@@ -205,7 +207,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Categories Section - Added */}
-        <div className="py-6">
+        {/* CORRECTION 3: Reduced vertical padding from py-6 to py-4 */}
+        <div className="py-4">
           <h2 className="text-2xl font-bold mb-4 text-foreground">Categories</h2>
           <div className="flex flex-wrap gap-4">
             {allCategories.map((category) => (
@@ -241,17 +244,15 @@ export default function DashboardPage() {
             </div>
           </div>
         ) : (
-          <div className="space-y-16">
+          <div className="space-y-8">
             {Object.keys(categorizedProducts).map((category, index) => (
-              <div key={category} className="space-y-8">
+              <div key={category} className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="space-y-2">
-                    <h2 className="text-3xl font-bold capitalize bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+                  {/* CORRECTION 6: Removed 'products available' paragraph */}
+                  <div className="space-y-1"> 
+                    <h2 className="text-2xl font-bold capitalize bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
                       {category}
                     </h2>
-                    <p className="text-muted-foreground">
-                      {categorizedProducts[category].length} products available
-                    </p>
                   </div>
                   <Button 
                     variant="outline" 
@@ -263,8 +264,6 @@ export default function DashboardPage() {
                   </Button>
                 </div>
                 
-                {/* *** THE KEY CORRECTION FOR MOBILE HORIZONTAL SCROLLING *** */}
-                {/* Changed flex-wrap to overflow-x-auto and ensured default is a single line (no flex-wrap) */}
                 <div className="flex overflow-x-auto gap-4 pb-4 md:flex-wrap md:gap-6"> 
                   {categorizedProducts[category].map(product => (
                     <ProductCard
