@@ -8,11 +8,20 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Star, ArrowRight, Sparkles } from "lucide-react";
+import { Search, Star, ArrowRight, Sparkles, ChevronDown } from "lucide-react"; // Added ChevronDown for dropdown
 import { fetchProducts, UPLOADS_BASE_URL } from "@/utils/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Link } from "react-router-dom"; // Import Link for category buttons
+import { Link } from "react-router-dom"; 
+// Assuming you have these components imported for the dropdown
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 const ProductCard = ({ product, handleCardClick }) => {
   const getStockBadge = (stock) => {
@@ -146,7 +155,7 @@ export default function DashboardPage() {
     return [...new Set(products.map(p => p.category).filter(Boolean))].sort();
   }, [products]);
 
-  // Handler for "View All" button - NEW LOGIC
+  // Handler for "View All" button 
   const handleViewAllCategory = (categoryName) => {
     // Navigate to the products page with the category query parameter
     navigate(`/products?category=${encodeURIComponent(categoryName)}`);
@@ -176,12 +185,13 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      {/* CORRECTION: Removed mobile padding/margin for edge-to-edge look */}
-      <div className="px-0 md:container md:mx-auto md:px-6 py-8 space-y-10">
+      {/* Reduced py-8 to py-4 to decrease vertical margin for the whole section */}
+      <div className="px-0 md:container md:mx-auto md:px-6 py-4 space-y-4"> 
         
-        {/* Hero and Search Section - Re-adding padding just for the content inside */}
+        {/* Hero and Search Section */}
+        {/* Removed py-8 from the inner div to reduce space between hero and next section */}
         <div className="px-4 md:px-0"> 
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8 py-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 pt-8 pb-4">
             {/* Hero Content - Adjusted */}
             <div className="text-center md:text-left space-y-4 max-w-2xl md:max-w-xl mx-auto md:mx-0">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm">
@@ -198,8 +208,12 @@ export default function DashboardPage() {
 
             {/* Search Section */}
             <div className="w-full md:w-auto max-w-lg md:max-w-md">
-              <Card className="bg-gradient-to-r from-card via-card/80 to-muted/10 border-border/50 shadow-elegant backdrop-blur-sm">
-                <CardContent className="p-6">
+              {/* MODIFICATION 1: Removed `border-border/50` from the Card component for mobile view 
+                  by adding `sm:border-border/50` to keep the border on desktop but remove it otherwise.
+                  Also removed `shadow-elegant` from the Card for mobile, keeping it only for desktop. */}
+              <Card className="bg-gradient-to-r from-card via-card/80 to-muted/10 md:border-border/50 md:shadow-elegant backdrop-blur-sm border-none shadow-none">
+                {/* Reduced CardContent padding from p-6 to p-4 for a slightly more compact search bar */}
+                <CardContent className="p-4"> 
                   <div className="relative">
                     <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
                     <Input
@@ -214,25 +228,40 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
-
-        {/* Categories Section - Added */}
-        <div className="py-4 px-4 md:px-0">
+        
+        {/* MODIFICATION 2 & 3: Categories Section - Replaced inline list with a dropdown button */}
+        {/* Adjusted vertical padding from py-4 to pt-0 pb-6 to reduce space from above and define space below */}
+        <div className="pt-0 pb-6 px-4 md:px-0">
           <h2 className="text-2xl font-bold mb-4 text-foreground">Categories</h2>
-          <div className="flex flex-wrap gap-4">
-            {allCategories.map((category) => (
-              <Link 
-                key={category} 
-                to={`/products?category=${encodeURIComponent(category)}`}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="outline" 
+                className="capitalize border-primary/20 hover:bg-primary/5 hover:text-primary transition-colors"
               >
-                <Button variant="outline" className="capitalize border-primary/20 hover:bg-primary/5 hover:text-primary transition-colors">
-                  {category}
-                </Button>
-              </Link>
-            ))}
-          </div>
+                Browse Categories ({allCategories.length}) 
+                <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuLabel>All Categories</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {allCategories.map((category) => (
+                <Link 
+                  key={category} 
+                  to={`/products?category=${encodeURIComponent(category)}`}
+                  className="w-full"
+                >
+                  <DropdownMenuItem className="capitalize cursor-pointer">
+                    {category}
+                  </DropdownMenuItem>
+                </Link>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
-        {/* Products Section */}
+        {/* Products Section - Re-used the space-y-8 container below */}
         {Object.keys(categorizedProducts).length === 0 ? (
           <div className="text-center py-24 px-4 md:px-0">
             <div className="space-y-6">
@@ -261,7 +290,7 @@ export default function DashboardPage() {
                       {category}
                     </h2>
                   </div>
-                  {/* FIX: Updated onClick to navigate to the category-specific products page */}
+                  {/* Updated onClick to navigate to the category-specific products page */}
                   <Button 
                     variant="outline" 
                     onClick={() => handleViewAllCategory(category)}
