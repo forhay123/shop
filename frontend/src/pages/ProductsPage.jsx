@@ -8,28 +8,31 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingCart, Search, Star, Heart, ArrowLeft, Package, Truck, ArrowRight } from "lucide-react"; // Added ArrowRight for the card
+import { ShoppingCart, Search, Star, Heart, ArrowLeft, Package, Truck, ArrowRight } from "lucide-react"; 
 import { fetchProducts, addItemToCart, UPLOADS_BASE_URL } from "@/utils/api";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
-import { Link } from "react-router-dom"; // Import Link for category buttons
+import { Link } from "react-router-dom"; 
 
-// Renamed ProductGridCard to ProductCard for consistency.
-// Note: This is the same as the ProductCard in your DashboardPage.js.
-// For a production app, you'd move this component to a shared file.
-const DashboardProductCard = ({ product, handleCardClick }) => {
+// The Product Card Component - Corrected for compact view and added Add to Cart
+const ProductCard = ({ product, handleCardClick, handleAddToCart, isLoggedIn }) => {
   const getStockBadge = (stock) => {
     if (stock === 0) return <Badge variant="destructive">Out of Stock</Badge>;
     if (stock <= 5) return <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0">Almost Gone ({stock} left)</Badge>;
-    return <Badge variant="secondary" className="bg-gradient-to-r from-green-500/10 to-blue-500/10 text-foreground border-green-500/20">{stock} in stock</Badge>;
+    // Compact styling for stock badge
+    return <Badge variant="secondary" className="bg-gradient-to-r from-green-500/10 to-blue-500/10 text-foreground border-green-500/20 text-xs px-2 py-0.5">{stock} in stock</Badge>; 
   };
 
   return (
     <Card 
-      className="group flex-none w-56 bg-gradient-to-br from-card to-card/50 border-border/50 shadow-elegant hover:shadow-glow transition-all duration-500 transform hover:-translate-y-2 cursor-pointer overflow-hidden"
-      onClick={() => handleCardClick(product)}
+      // MODIFICATION 1: Compact width w-40, flex-none to prevent shrinking
+      className="group flex-none w-40 bg-gradient-to-br from-card to-card/50 border-border/50 shadow-elegant hover:shadow-glow transition-all duration-500 transform hover:-translate-y-2 cursor-pointer overflow-hidden"
     >
-      <div className="relative h-48 w-full overflow-hidden">
+      {/* MODIFICATION 2: Reduced image height from h-48 to h-36 */}
+      <div 
+        className="relative h-36 w-full overflow-hidden"
+        onClick={() => handleCardClick(product)} // Click image/top half to view details
+      >
         <img
           src={`${UPLOADS_BASE_URL}/${product.image_url}`}
           alt={product.name}
@@ -37,37 +40,52 @@ const DashboardProductCard = ({ product, handleCardClick }) => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         {product.stock === 0 && (
-          <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-destructive text-destructive-foreground text-xs font-semibold backdrop-blur-sm">
+          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-destructive text-destructive-foreground text-xs font-semibold backdrop-blur-sm">
             Sold Out
           </div>
         )}
-        <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="p-2 rounded-full bg-background/90 backdrop-blur-sm">
-            <ArrowRight className="w-4 h-4 text-primary" />
+        <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="p-1.5 rounded-full bg-background/90 backdrop-blur-sm"> 
+            <ArrowRight className="w-3 h-3 text-primary" /> 
           </div>
         </div>
       </div>
-      <CardHeader className="p-6 space-y-3">
-        <div className="space-y-2">
-          <CardTitle className="text-lg font-bold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+      
+      {/* MODIFICATION 3: Reduced padding */}
+      <CardHeader className="p-4 space-y-2" onClick={() => handleCardClick(product)}>
+        <div className="space-y-1"> 
+          {/* Reduced title font size from text-lg to text-base */}
+          <CardTitle className="text-base font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
             {product.name}
           </CardTitle>
           <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+            {/* Reduced price font size from text-2xl to text-xl */}
+            <div className="text-xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
               ${product.selling_price.toFixed(2)}
             </div>
             <div className="flex items-center gap-1">
-              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              <span className="text-sm text-muted-foreground">4.8</span>
+              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" /> 
+              <span className="text-xs text-muted-foreground">4.8</span> 
             </div>
           </div>
         </div>
-        {getStockBadge(product.stock)}
+        <div className="pt-1">{getStockBadge(product.stock)}</div> 
       </CardHeader>
-      <CardContent className="px-6 pb-6 pt-0">
-        <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
-          {product.description}
-        </p>
+      
+      {/* MODIFICATION 4: Added Add to Cart button */}
+      <CardContent className="px-4 pb-4 pt-0">
+        <Button
+            size="sm"
+            className="w-full h-8 text-xs bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent card click handler from firing
+              handleAddToCart(product);
+            }}
+            disabled={product.stock === 0 || !isLoggedIn}
+          >
+            <ShoppingCart className="w-3 h-3 mr-1.5" />
+            {product.stock === 0 ? "Sold Out" : isLoggedIn ? "Add to Cart" : "Log in to Buy"}
+          </Button>
       </CardContent>
     </Card>
   );
@@ -137,10 +155,10 @@ const FeaturedProductCard = ({ product, handleAddToCart, isLoggedIn }) => {
                 size="lg"
                 className="flex-1 h-14 text-lg bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary shadow-elegant"
                 onClick={() => handleAddToCart(product)}
-                disabled={product.stock === 0}
+                disabled={product.stock === 0 || !isLoggedIn}
               >
                 <ShoppingCart className="w-5 h-5 mr-3" />
-                {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+                {product.stock === 0 ? "Out of Stock" : isLoggedIn ? "Add to Cart" : "Log in to Add"}
               </Button>
               <Button
                 size="lg"
@@ -174,7 +192,7 @@ const FeaturedProductCard = ({ product, handleAddToCart, isLoggedIn }) => {
   );
 };
 
-// Related product card component (retained as is)
+// Related product card component - Kept its original size since it's only used in a scrollable list
 const RelatedProductCard = ({ product, onSelect }) => {
   const getStockBadge = (stock) => {
     if (stock === 0) return <Badge variant="destructive" className="text-xs">Out of Stock</Badge>;
@@ -249,6 +267,7 @@ export default function ProductsPage() {
   const handleAddToCart = async (product) => {
     try {
       if (!isLoggedIn) {
+        toast.info("Please log in to add items to your cart.");
         navigate("/login");
         return;
       }
@@ -264,6 +283,9 @@ export default function ProductsPage() {
       let errorMessage = "Failed to add to cart.";
       if (Array.isArray(errors) && errors.length > 0) {
         errorMessage = errors[0].msg || errorMessage;
+      } else if (err.response?.data?.detail) {
+        // Handle a string detail error message
+        errorMessage = err.response.data.detail;
       } else {
         errorMessage = err.message || errorMessage;
       }
@@ -274,7 +296,7 @@ export default function ProductsPage() {
   const filteredProducts = useMemo(() => {
     let filtered = products.filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                           product.description.toLowerCase().includes(searchTerm.toLowerCase());
+                             product.description.toLowerCase().includes(searchTerm.toLowerCase());
       return matchesSearch;
     });
 
@@ -332,9 +354,11 @@ export default function ProductsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <div className="container mx-auto px-6 py-16">
+      {/* CORRECTION 1: Removed mobile padding/margin (px-0, md:container md:mx-auto md:px-6) */}
+      <div className="px-0 md:container md:mx-auto md:px-6 py-8 md:py-16 space-y-12 md:space-y-16"> 
         {selectedProduct ? (
-          <div className="space-y-16">
+          // Product Detail View
+          <div className="space-y-16 px-4 md:px-0"> {/* Re-add padding for content */}
             <div className="flex items-center gap-4">
               <Button 
                 variant="outline" 
@@ -357,6 +381,7 @@ export default function ProductsPage() {
                   <p className="text-muted-foreground">More products from the {selectedProduct.category} category</p>
                 </div>
                 
+                {/* Related products list - kept scrollable as is often desired for related items */}
                 <div className="flex overflow-x-auto gap-8 pb-6 scrollbar-hide">
                   {relatedProducts.map(product => (
                     <RelatedProductCard
@@ -372,8 +397,9 @@ export default function ProductsPage() {
             )}
           </div>
         ) : (
+          // Product Grid View
           <div className="space-y-12">
-            <div className="text-center space-y-6">
+            <div className="text-center space-y-6 px-4 md:px-0">
               <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
                 Premium Products
               </h1>
@@ -382,7 +408,7 @@ export default function ProductsPage() {
               </p>
             </div>
 
-            <div className="max-w-xl mx-auto">
+            <div className="max-w-xl mx-auto px-4 md:px-0">
               <Card className="bg-gradient-to-r from-card to-muted/10 border-border/50 shadow-medium">
                 <CardContent className="p-6">
                   <div className="relative">
@@ -399,7 +425,7 @@ export default function ProductsPage() {
             </div>
 
             {categoryParam && (
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 px-4 md:px-0">
                 <Button 
                   variant="outline" 
                   onClick={() => navigate("/products")}
@@ -413,7 +439,7 @@ export default function ProductsPage() {
             )}
 
             {Object.keys(categorizedProducts).length === 0 ? (
-              <div className="text-center py-24">
+              <div className="text-center py-24 px-4 md:px-0">
                 <div className="space-y-6">
                   <div className="w-24 h-24 mx-auto rounded-full bg-muted/20 flex items-center justify-center">
                     <Search className="w-12 h-12 text-muted-foreground/50" />
@@ -432,7 +458,7 @@ export default function ProductsPage() {
                 {Object.entries(categorizedProducts).map(([category, categoryProducts]) => (
                   <div key={category} className="space-y-8">
                     { !categoryParam && (
-                      <div className="space-y-2">
+                      <div className="space-y-2 px-4 md:px-0">
                         <h2 className="text-3xl font-bold capitalize">{category}</h2>
                         <p className="text-muted-foreground">
                           {categoryProducts.length} products available
@@ -440,12 +466,15 @@ export default function ProductsPage() {
                       </div>
                     )}
                     
-                    <div className="flex overflow-x-auto gap-8 pb-6 scrollbar-hide">
+                    {/* CORRECTION 2: Implemented desktop row limit logic */}
+                    <div className="flex overflow-x-auto gap-4 pb-4 pl-4 md:pl-0 md:flex-wrap md:overflow-hidden md:gap-6">
                       {categoryProducts.map(product => (
-                        <DashboardProductCard
+                        <ProductCard // Using the corrected ProductCard
                           key={product.id}
                           product={product}
-                          handleCardClick={handleProductCardClick} // Use the new handler
+                          handleCardClick={handleProductCardClick} 
+                          handleAddToCart={handleAddToCart}
+                          isLoggedIn={isLoggedIn}
                         />
                       ))}
                     </div>
