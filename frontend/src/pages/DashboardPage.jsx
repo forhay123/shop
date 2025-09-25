@@ -18,15 +18,18 @@ const ProductCard = ({ product, handleCardClick }) => {
   const getStockBadge = (stock) => {
     if (stock === 0) return <Badge variant="destructive">Out of Stock</Badge>;
     if (stock <= 5) return <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0">Almost Gone ({stock} left)</Badge>;
-    return <Badge variant="secondary" className="bg-gradient-to-r from-green-500/10 to-blue-500/10 text-foreground border-green-500/20">{stock} in stock</Badge>;
+    // Reduced padding/size for a more compact look
+    return <Badge variant="secondary" className="bg-gradient-to-r from-green-500/10 to-blue-500/10 text-foreground border-green-500/20 text-xs px-2 py-0.5">{stock} in stock</Badge>; 
   };
 
   return (
     <Card 
-      className="group flex-none w-56 bg-gradient-to-br from-card to-card/50 border-border/50 shadow-elegant hover:shadow-glow transition-all duration-500 transform hover:-translate-y-2 cursor-pointer overflow-hidden"
+      // *** CORRECTION 1: Reduced card width from w-56 to w-44 ***
+      className="group flex-none w-44 bg-gradient-to-br from-card to-card/50 border-border/50 shadow-elegant hover:shadow-glow transition-all duration-500 transform hover:-translate-y-2 cursor-pointer overflow-hidden"
       onClick={() => handleCardClick(product)}
     >
-      <div className="relative h-48 w-full overflow-hidden">
+      {/* *** CORRECTION 2: Reduced image height from h-48 to h-36 *** */}
+      <div className="relative h-36 w-full overflow-hidden">
         <img
           src={`${UPLOADS_BASE_URL}/${product.image_url}`}
           alt={product.name}
@@ -34,35 +37,40 @@ const ProductCard = ({ product, handleCardClick }) => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         {product.stock === 0 && (
-          <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-destructive text-destructive-foreground text-xs font-semibold backdrop-blur-sm">
+          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-destructive text-destructive-foreground text-xs font-semibold backdrop-blur-sm">
             Sold Out
           </div>
         )}
-        <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="p-2 rounded-full bg-background/90 backdrop-blur-sm">
-            <ArrowRight className="w-4 h-4 text-primary" />
+        <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="p-1.5 rounded-full bg-background/90 backdrop-blur-sm"> {/* Reduced padding */}
+            <ArrowRight className="w-3 h-3 text-primary" /> {/* Reduced icon size */}
           </div>
         </div>
       </div>
-      <CardHeader className="p-6 space-y-3">
-        <div className="space-y-2">
-          <CardTitle className="text-lg font-bold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+      {/* *** CORRECTION 3: Reduced padding in CardHeader from p-6 to p-4 *** */}
+      <CardHeader className="p-4 space-y-2"> {/* Reduced vertical space */}
+        <div className="space-y-1"> {/* Reduced vertical space */}
+          {/* *** CORRECTION 4: Reduced title font size from text-lg to text-base *** */}
+          <CardTitle className="text-base font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
             {product.name}
           </CardTitle>
           <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+            {/* *** CORRECTION 5: Reduced price font size from text-2xl to text-xl *** */}
+            <div className="text-xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
               ${product.selling_price.toFixed(2)}
             </div>
             <div className="flex items-center gap-1">
-              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              <span className="text-sm text-muted-foreground">4.8</span>
+              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" /> {/* Reduced icon size */}
+              <span className="text-xs text-muted-foreground">4.8</span> {/* Reduced text size */}
             </div>
           </div>
         </div>
-        {getStockBadge(product.stock)}
+        <div className="pt-1">{getStockBadge(product.stock)}</div> {/* Added a div for better stock badge placement */}
       </CardHeader>
-      <CardContent className="px-6 pb-6 pt-0">
-        <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+      {/* *** CORRECTION 6: Reduced padding in CardContent from px-6 pb-6 pt-0 to px-4 pb-4 pt-0 *** */}
+      <CardContent className="px-4 pb-4 pt-0 hidden"> 
+        {/* Hidden to further reduce height, as the Jumia example doesn't show descriptions */}
+        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
           {product.description}
         </p>
       </CardContent>
@@ -98,7 +106,7 @@ export default function DashboardPage() {
   const categorizedProducts = useMemo(() => {
     const filteredProducts = products.filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                            product.description.toLowerCase().includes(searchTerm.toLowerCase());
+                             product.description.toLowerCase().includes(searchTerm.toLowerCase());
       return matchesSearch;
     });
 
@@ -255,7 +263,8 @@ export default function DashboardPage() {
                   </Button>
                 </div>
                 
-                <div className="flex overflow-x-auto gap-8 pb-6 scrollbar-hide">
+                {/* Corrected: Added flex-wrap and adjusted gap for better layout */}
+                <div className="flex flex-wrap gap-6"> 
                   {categorizedProducts[category].map(product => (
                     <ProductCard
                       key={product.id}
