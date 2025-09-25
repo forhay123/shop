@@ -149,6 +149,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+        {/* Retained `container mx-auto px-6` for loading state padding */}
         <div className="container mx-auto px-6 py-24">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center space-y-6">
@@ -169,46 +170,51 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      {/* CORRECTION 1: Reduced main vertical padding from py-16 to py-8 */}
-      <div className="container mx-auto px-6 py-8 space-y-10">
-        {/* Hero and Search Section combined to save vertical space */}
-        {/* CORRECTION 2: Reduced vertical padding from py-12 to py-8 */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8 py-8">
-          {/* Hero Content - Adjusted */}
-          <div className="text-center md:text-left space-y-4 max-w-2xl md:max-w-xl mx-auto md:mx-0">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">Welcome to your dashboard</span>
+      {/* *** MAJOR CORRECTION: Removed 'container mx-auto px-6' from the main content wrapper. ***
+        We now use 'px-6 md:px-0' to remove side padding on mobile (default) and re-introduce it 
+        on desktop/larger screens (md:px-0 is effectively removed when container is used).
+        The 'container mx-auto' logic is applied using responsive utility classes.
+      */}
+      <div className="px-0 md:container md:mx-auto md:px-6 py-8 space-y-10">
+        
+        {/* Hero and Search Section - Re-adding padding just for the content inside */}
+        <div className="px-4 md:px-0"> {/* Add horizontal padding back only for internal elements */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 py-8">
+            {/* Hero Content - Adjusted */}
+            <div className="text-center md:text-left space-y-4 max-w-2xl md:max-w-xl mx-auto md:mx-0">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm">
+                <Sparkles className="w-4 h-4" />
+                <span className="text-sm font-medium">Welcome to your dashboard</span>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent leading-tight">
+                Discover Premium Technology
+              </h1>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Explore our curated collection of cutting-edge computing devices and accessories, designed for professionals who demand excellence.
+              </p>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent leading-tight">
-              Discover Premium Technology
-            </h1>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Explore our curated collection of cutting-edge computing devices and accessories, designed for professionals who demand excellence.
-            </p>
-          </div>
 
-          {/* Search Section */}
-          <div className="w-full md:w-auto max-w-lg md:max-w-md">
-            <Card className="bg-gradient-to-r from-card via-card/80 to-muted/10 border-border/50 shadow-elegant backdrop-blur-sm">
-              <CardContent className="p-6">
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
-                  <Input
-                    placeholder="Search for laptops, accessories, components..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-12 pr-4 py-3 text-lg border-border/50 bg-background/50 focus:bg-background transition-colors"
-                  />
-                </div>
-              </CardContent>
-            </Card>
+            {/* Search Section */}
+            <div className="w-full md:w-auto max-w-lg md:max-w-md">
+              <Card className="bg-gradient-to-r from-card via-card/80 to-muted/10 border-border/50 shadow-elegant backdrop-blur-sm">
+                <CardContent className="p-6">
+                  <div className="relative">
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                    <Input
+                      placeholder="Search for laptops, accessories, components..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-12 pr-4 py-3 text-lg border-border/50 bg-background/50 focus:bg-background transition-colors"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
 
         {/* Categories Section - Added */}
-        {/* CORRECTION 3: Reduced vertical padding from py-6 to py-4 */}
-        <div className="py-4">
+        <div className="py-4 px-4 md:px-0">
           <h2 className="text-2xl font-bold mb-4 text-foreground">Categories</h2>
           <div className="flex flex-wrap gap-4">
             {allCategories.map((category) => (
@@ -226,7 +232,7 @@ export default function DashboardPage() {
 
         {/* Products Section */}
         {Object.keys(categorizedProducts).length === 0 ? (
-          <div className="text-center py-24">
+          <div className="text-center py-24 px-4 md:px-0">
             <div className="space-y-6">
               <div className="w-24 h-24 mx-auto rounded-full bg-muted/20 flex items-center justify-center">
                 <Search className="w-12 h-12 text-muted-foreground/50" />
@@ -247,8 +253,7 @@ export default function DashboardPage() {
           <div className="space-y-8">
             {Object.keys(categorizedProducts).map((category, index) => (
               <div key={category} className="space-y-4">
-                <div className="flex items-center justify-between">
-                  {/* CORRECTION 6: Removed 'products available' paragraph */}
+                <div className="flex items-center justify-between px-4 md:px-0">
                   <div className="space-y-1"> 
                     <h2 className="text-2xl font-bold capitalize bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
                       {category}
@@ -264,7 +269,12 @@ export default function DashboardPage() {
                   </Button>
                 </div>
                 
-                <div className="flex overflow-x-auto gap-4 pb-4 md:flex-wrap md:gap-6"> 
+                {/* *** CORRECTION FOR ROW LIMIT: 
+                  For mobile: We use `overflow-x-auto` with `gap-4` and `pl-4` to create an edge-to-edge scroll.
+                  For desktop (`md`): We use `md:flex-nowrap md:overflow-hidden` to show exactly one row of items, 
+                  cutting off any items that exceed the screen width. We also add `md:px-0` to the item container itself.
+                */}
+                <div className="flex overflow-x-auto gap-4 pb-4 pl-4 md:pl-0 md:flex-nowrap md:overflow-hidden"> 
                   {categorizedProducts[category].map(product => (
                     <ProductCard
                       key={product.id}
