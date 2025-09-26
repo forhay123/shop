@@ -164,7 +164,6 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-        {/* Retained `container mx-auto px-6` for loading state padding */}
         <div className="container mx-auto px-6 py-24">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center space-y-6">
@@ -189,7 +188,6 @@ export default function DashboardPage() {
       <div className="px-0 md:container md:mx-auto md:px-6 py-4 space-y-4"> 
         
         {/* Hero and Search Section */}
-        {/* Removed py-8 from the inner div to reduce space between hero and next section */}
         <div className="px-4 md:px-0"> 
           <div className="flex flex-col md:flex-row items-center justify-between gap-8 pt-8 pb-4">
             {/* Hero Content - Adjusted */}
@@ -208,11 +206,8 @@ export default function DashboardPage() {
 
             {/* Search Section */}
             <div className="w-full md:w-auto max-w-lg md:max-w-md">
-              {/* MODIFICATION 1: Removed `border-border/50` from the Card component for mobile view 
-                  by adding `sm:border-border/50` to keep the border on desktop but remove it otherwise.
-                  Also removed `shadow-elegant` from the Card for mobile, keeping it only for desktop. */}
+              {/* MODIFICATION 1: Removed outer border for mobile */}
               <Card className="bg-gradient-to-r from-card via-card/80 to-muted/10 md:border-border/50 md:shadow-elegant backdrop-blur-sm border-none shadow-none">
-                {/* Reduced CardContent padding from p-6 to p-4 for a slightly more compact search bar */}
                 <CardContent className="p-4"> 
                   <div className="relative">
                     <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
@@ -229,39 +224,57 @@ export default function DashboardPage() {
           </div>
         </div>
         
-        {/* MODIFICATION 2 & 3: Categories Section - Replaced inline list with a dropdown button */}
-        {/* Adjusted vertical padding from py-4 to pt-0 pb-6 to reduce space from above and define space below */}
+        {/* MODIFICATION 2 & 3: Categories Section - Responsive Display */}
         <div className="pt-0 pb-6 px-4 md:px-0">
           <h2 className="text-2xl font-bold mb-4 text-foreground">Categories</h2>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="outline" 
-                className="capitalize border-primary/20 hover:bg-primary/5 hover:text-primary transition-colors"
-              >
-                Browse Categories ({allCategories.length}) 
-                <ChevronDown className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuLabel>All Categories</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {allCategories.map((category) => (
-                <Link 
-                  key={category} 
-                  to={`/products?category=${encodeURIComponent(category)}`}
-                  className="w-full"
+          
+          {/* Mobile View: Dropdown Menu */}
+          <div className="md:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  className="capitalize border-primary/20 hover:bg-primary/5 hover:text-primary transition-colors w-full justify-between"
                 >
-                  <DropdownMenuItem className="capitalize cursor-pointer">
-                    {category}
-                  </DropdownMenuItem>
-                </Link>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                  Browse Categories ({allCategories.length}) 
+                  <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-[calc(100vw-32px)]"> {/* Make dropdown full width on mobile (minus padding) */}
+                <DropdownMenuLabel>All Categories</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {allCategories.map((category) => (
+                  <Link 
+                    key={category} 
+                    to={`/products?category=${encodeURIComponent(category)}`}
+                    className="w-full"
+                  >
+                    <DropdownMenuItem className="capitalize cursor-pointer">
+                      {category}
+                    </DropdownMenuItem>
+                  </Link>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* Desktop View: Horizontal Buttons */}
+          <div className="hidden md:flex flex-wrap gap-4">
+            {allCategories.map((category) => (
+              <Link 
+                key={category} 
+                to={`/products?category=${encodeURIComponent(category)}`}
+              >
+                <Button variant="outline" className="capitalize border-primary/20 hover:bg-primary/5 hover:text-primary transition-colors">
+                  {category}
+                </Button>
+              </Link>
+            ))}
+          </div>
+
         </div>
 
-        {/* Products Section - Re-used the space-y-8 container below */}
+        {/* Products Section */}
         {Object.keys(categorizedProducts).length === 0 ? (
           <div className="text-center py-24 px-4 md:px-0">
             <div className="space-y-6">
