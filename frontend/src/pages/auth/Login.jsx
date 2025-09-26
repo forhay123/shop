@@ -15,22 +15,18 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const auth = useAuth(); // ✅ Use AuthContext
+  const auth = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // 1️⃣ Get token from dedicated API function
       const { access_token } = await loginUser(email, password);
-
-      // 2️⃣ Use the login function from AuthContext
       await auth.login(access_token);
 
       toast.success("Login successful!");
 
-      // 3️⃣ Redirect after the context has updated
       const redirectTo = location.state?.redirectTo;
       if (redirectTo) {
         navigate(redirectTo, { replace: true });
@@ -110,9 +106,7 @@ export default function Login() {
             <Button
               type="submit"
               disabled={isLoading}
-              // FIX: Removed unnecessary hover-dependent class. 
-              // Added 'shadow-md' for constant visibility and maintained the gradient.
-              className="w-full bg-gradient-primary shadow-md hover:shadow-lg transition-all duration-300 font-semibold py-3 h-auto"
+              className="w-full bg-gradient-primary text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300 py-3 h-auto disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
