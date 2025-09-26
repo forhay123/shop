@@ -110,7 +110,9 @@ export default function Login() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-primary hover:shadow-medium transition-all duration-300 font-semibold py-3 h-auto"
+              // FIX: Removed unnecessary hover-dependent class. 
+              // Added 'shadow-md' for constant visibility and maintained the gradient.
+              className="w-full bg-gradient-primary shadow-md hover:shadow-lg transition-all duration-300 font-semibold py-3 h-auto"
             >
               {isLoading ? (
                 <>
